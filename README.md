@@ -2,12 +2,6 @@
 
 This project records meeting notes, summarizes them using a language model, and saves the summary to a DOCX file.
 
-
-
-// figure out what happens in app1.py first
-// cool its working
-// next use togetherAI with LLAMAINDEX
-
 <a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&random=false&width=435&lines=SUM.io;By+Team+R+Stack;Aspiring+AI%2FML+Developers" alt="Typing SVG" /></a>
 
 "Welcome to sum.io, the AI-powered meeting summarization tool that's revolutionizing how teams communicate and collaborate. Created for the Llama 3 hackathon, sum.io addresses a common pain point in today's digital workplace: the need for efficient, accurate, and timely meeting summaries.
