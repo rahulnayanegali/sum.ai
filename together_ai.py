@@ -19,6 +19,7 @@ def load_api_key(config_path: str) -> str:
 
 # Initialize Together client
 def initialize_together_client(api_key: str) -> Together:
+  
     return Together(api_key=api_key)
 
 # Function to read text from a file
@@ -28,41 +29,41 @@ def read_text_file(file_path: str) -> str:
     with open(file_path, 'r', encoding='utf-8') as file:
         return file.read()
     
-client = Together(api_key=load_api_key("config.json"))
+# client = Together(api_key=load_api_key("config.json"))
 
-# Initialize embedding and generative models
-embed_model = TogetherEmbedding(model_name="togethercomputer/m2-bert-80M-8k-retrieval", api_key = load_api_key("config.json"))
-llm = TogetherLLM(model="meta-llama/Llama-3-8b-chat-hf", api_key=load_api_key("config.json"))
+# # Initialize embedding and generative models
+# embed_model = TogetherEmbedding(model_name="togethercomputer/m2-bert-80M-8k-retrieval", api_key = load_api_key("config.json"))
+# llm = TogetherLLM(model="meta-llama/Llama-3-8b-chat-hf", api_key=load_api_key("config.json"))
 
-# Read and process text from 'output.txt'
-file_text = read_text_file("output.txt")
-embeddings = embed_model.get_text_embedding(file_text)
+# # Read and process text from 'output.txt'
+# file_text = read_text_file("output.txt")
+# embeddings = embed_model.get_text_embedding(file_text)
 
 
 def interpret_embeddings(embeddings):
     # Example: Pretend to analyze embeddings and return a summary
     return "return Team_Name, Key_Discussion_Points, Action_Items, Decisions_Made"
 
-# Construct a contextual prompt using interpreted embeddings
-interpreted_context = interpret_embeddings(embeddings)
-contextual_prompt = f"Based on the document's key themes, such as {interpreted_context}, provide a detailed analysis and summary."
+# # Construct a contextual prompt using interpreted embeddings
+# interpreted_context = interpret_embeddings(embeddings)
+# contextual_prompt = f"Based on the document's key themes, such as {interpreted_context}, provide a detailed analysis and summary."
 
-# Generate chat response using the LLM
-messages = [{"role": "user", "content": contextual_prompt + " " + file_text}]
-stream = client.chat.completions.create(
-    model="meta-llama/Llama-3-8b-chat-hf",
-    messages=messages,
-    stream=True,
-)
+# # Generate chat response using the LLM
+# messages = [{"role": "user", "content": contextual_prompt + " " + file_text}]
+# stream = client.chat.completions.create(
+#     model="meta-llama/Llama-3-8b-chat-hf",
+#     messages=messages,
+#     stream=True,
+# )
 
 
-# store the above response in a variable 
-response = ""
-for chunk in stream:
-    response += chunk.choices[0].delta.content or ""
+# # store the above response in a variable 
+# response = ""
+# for chunk in stream:
+#     response += chunk.choices[0].delta.content or ""
 
-# print the response
-print("response", response)
+# # print the response
+# # print("response", response)
 
 # Summarize text using the LLM
 def summarize_text(text: str, client: Together) -> str:
@@ -171,7 +172,7 @@ def main():
     # Output summary to a .docx file
     output_summary_to_docx(summary)
 
-    # print(f"Summary: {summary}")
+    print(f"Summary: {summary}")
 
 # Run the main function
 if __name__ == "__main__":

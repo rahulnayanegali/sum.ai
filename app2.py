@@ -21,8 +21,8 @@ def main():
     start_time = time.time()
 
     # Clear the output.txt file before starting recording
-    with open("output.txt", "w") as f:
-        f.write("")
+    # with open("output.txt", "w") as f:
+    #     f.write("")
 
     while time.time() - start_time < total_duration:
         text = record_text()
