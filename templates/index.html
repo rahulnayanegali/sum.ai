@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sum.io - Audio Recorder and Summarizer</title>
+    <link rel="stylesheet" href="../static/style.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <div class="company-heading">
+        <div class="dropdown">
+          <button class="dropbtn">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <div class="dropdown-content">
+            <div class="dropdown-section">
+              <h3>About</h3>
+              <p>Sum.io is an innovative AI company dedicated to pushing the boundaries of artificial intelligence and machine learning for easier meetings.</p>
+            </div>
+            <div class="dropdown-section">
+              <h3>Team</h3>
+              <p>Developed by the funky minds of Team R-Stack (Rushi, Rahul and Raashil).</p>
+            </div>
+          </div>
+        </div>
+        <span class="company-name">sum.io</span>
+    </div>
+    <div class="parent">
+      <div class="reactor">
+        <div class="triangle"></div>
+        <div class="circle-1"><span></span><span></span><span></span><span></span></div>
+        <div class="circle-2"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="circle-3"></div>
+        <div class="circle-4"><span></span><span></span><span></span></div>
+        <div class="circle-5">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="circle-6"><div class="logo-heading"> SUM AI</div></div>
+        <div class="circle-7"></div>
+        <div class="circle-8"><span></span><span></span><span></span></div>
+      </div>
+      <div class="button-container">
+        <button type="button" class="button button1" id="startRecording">Start Recording</button>
+        <button type="button" class="button button2" id="stopRecording" disabled>Stop Recording</button>
+      </div>
+      <div class="button-container">
+        <button type="button" class="button" id="getSummary" disabled>Get Summary</button>
+      </div>
+      <div id="summary"></div>
+      <div id="status"></div>
+      <div id="emailSection" style="display: none;">
+        <input type="email" id="emailInput" placeholder="Enter recipient's email" required>
+        <button type="button" class="button" id="sendEmail" disabled>Send Summary</button>
+      </div>
+    </div>
+    <div class="footer-text">*Property of Team R-Stack</div>
+
+    <script>
+      $(document).ready(function() {
+        $('#startRecording').click(function() {
+          $.post('/start_recording', function(data) {
+            console.log(data.status);
+            $('#startRecording').prop('disabled', true);
+            $('#stopRecording').prop('disabled', false);
+          });
+        });
+
+        $('#stopRecording').click(function() {
+          $.post('/stop_recording', function(data) {
+            console.log(data.status);
+            $('#stopRecording').prop('disabled', true);
+            $('#getSummary').prop('disabled', false);
+          });
+        });
+
+        $('#getSummary').click(function() {
+          $('#status').text("Generating summary...");
+          checkSummaryStatus();
+        });
+
+        function checkSummaryStatus() {
+          $.get('/check_summary', function(data) {
+            if (data.ready) {
+              $('#status').text("Summary ready. Downloading...");
+              downloadSummary();
+            } else {
+              $('#status').text("Summary not ready yet. Checking again in 2 seconds...");
+              setTimeout(checkSummaryStatus, 2000);
+            }
+          });
+        }
+
+        function downloadSummary() {
+          $.get('/get_summary', function(data) {
+            $('#summary').text(data.summary);
+            
+            var a = document.createElement('a');
+            a.href = '/get_summary';
+            a.download = 'summary.docx';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            $('#status').text("Summary downloaded.");
+            $('#emailSection').show();
+            $('#sendEmail').prop('disabled', false);
+          }).fail(function() {
+            $('#status').text("Error downloading summary. Please try again.");
+          });
+        }
+
+        $('#emailInput').on('input', function() {
+          var email = $(this).val();
+          var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          $('#sendEmail').prop('disabled', !emailRegex.test(email));
+        });
+
+        $('#sendEmail').click(function() {
+          var email = $('#emailInput').val();
+          $.post('/send_email', { email: email }, function(data) {
+            $('#status').text(data.message);
+          }).fail(function(jqXHR) {
+            $('#status').text(jqXHR.responseJSON.message || "Error sending email. Please try again.");
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
